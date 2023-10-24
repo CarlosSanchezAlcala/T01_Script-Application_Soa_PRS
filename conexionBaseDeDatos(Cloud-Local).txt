@@ -1,0 +1,12 @@
+# Conexión a la Base de Datos en la nube (ElephantSQL)
+
+# spring.r2dbc.url=r2dbc:postgres://nkcmynvm:Ysi4CQW0o1gpOLBLeUaTJp8A2-41Wgp7@babar.db.elephantsql.com/nkcmynvm
+# spring.r2dbc.username=nkcmynvm
+# spring.r2dbc.password=Ysi4CQW0o1gpOLBLeUaTJp8A2-41Wgp7
+
+# Conexión a la Base de Datos en local (PostgreSQL)
+spring.r2dbc.url=r2dbc:postgres://localhost:5432/soa_canete_2023
+spring.r2dbc.username=postgres
+spring.r2dbc.password=7382993232@
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.hibernate.ddl-auto=update
