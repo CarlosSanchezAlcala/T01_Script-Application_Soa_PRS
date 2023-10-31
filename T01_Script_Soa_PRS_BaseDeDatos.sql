@@ -3,11 +3,13 @@
 -- TRUNCATE ubigeo RESTART IDENTITY;
 -- TRUNCATE teen RESTART IDENTITY;
 -- TRUNCATE funcionary RESTART IDENTITY;
+-- TRUNCATE operative_unit RESTART IDENTITY;
 -- TRUNCATE funcionary_teen RESTART IDENTITY;
 
 -- DROP TABLE ubigeo;
 -- DROP TABLE funcionary;
 -- DROP TABLE attorney;
+-- DROP TABLE operative_unit;
 -- DROP TABLE teen;
 -- DROP TABLE funcionary_teen;
 
@@ -28,14 +30,14 @@ CREATE TABLE attorney
 (
      id_attorney 		serial 			PRIMARY KEY,
      name 				varchar	(200) 	NOT NULL,
-	 surnameFather 		varchar	(200) 	NOT NULL,
-	 surnameMother 		varchar	(200) 	NOT NULL,
-     dni 				varchar	(8) 	NOT NULL,
-     phonenumber 		varchar	(9) 	NOT NULL,
-     address 			varchar	(200) 	NOT NULL,
-     email 				varchar	(200) 	NOT NULL,
+	 surnameFather 		varchar(200) 	NOT NULL,
+	 surnameMother 		varchar(200) 	NOT NULL,
+     dni 				varchar(8) 		NOT NULL,
+     phonenumber 		varchar(9) 		NOT NULL,
+     address 			varchar(200) 	NOT NULL,
+     email 				varchar(200) 	NOT NULL,
 	 codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
-     status 			char 	(1) 	NOT NULL DEFAULT ('A')
+     status 			char(1) 		NOT NULL DEFAULT ('A')
 );
 
 -- CREATION TABLE OF (TEEN)
@@ -72,6 +74,18 @@ CREATE TABLE funcionary
      email 				varchar	(200) 	NOT NULL,
 	 codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
      status 			char 	(1) 	NOT NULL DEFAULT ('A')
+);
+
+-- CREATION TABLE OF (OPERATIVE UNIT)
+CREATE TABLE operative_unit
+(
+	id_operativeunit	serial 			PRIMARY KEY,
+	name				varchar(200) 	NOT NULL,
+	id_funcionary		integer 		NOT NULL REFERENCES funcionary(id_funcionary),
+	phonenumber			char(9)			NOT NULL,
+	address				varchar(200)	NOT NULL,
+	codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
+	status				char(1)			NOT NULL DEFAULT ('A')
 );
 
 -- CREATION TABLE OF TRANSACTIONAL (FUNCIONARY (RANGE = {LEGAL GUARDIAN}) - ADOLESCENTE)
@@ -192,12 +206,21 @@ VALUES
 -- RECORDING DATA IN THE TABLE "FUNCIONARY" --
 
 INSERT INTO funcionary
-(name					, surnameFather	, surnameMother	, dni			, phonenumber	, range			,confirmation	, address								, email							,codubi)
+(name					, surnameFather	, surnameMother	, dni			, phonenumber	, range			,confirmation	, address								, email								,codubi)
 VALUES
-('Jose Mamerto'			, 'Quispe'		, 'Sanchez'		, '52132014'	, '985632102'	,'Psicologo'	, 'S' 			, 'Av. San Bartolo 7894'				, 'sinDirección@gmail.com'		,'150512'),
-('Alberto Jacinto'		, 'Mamani'		, 'Quispe'		, '45259632'	, '963032147'	,'Guía'			, 'S'			, 'Sin dirección exacta.'				, 'sinDirección@gmail.com'		,'150514'),
-('Manuel Javier'		, 'Sanchez'		, 'Lira'		, '96358974'	, '963032568'	,'Psicologo'	, 'N'			, 'Sin dirección exacta.'				, 'sinDirección@gmail.com'		,'150516'),
-('Luis Miguel'			, 'Lira'		, 'Del Riego'	, '02314521'	, '965874154'	,'Audante'		, 'N'			, 'Av. Simón Bolivar Mz B Lote 78'		, 'sinDirección@gmail.com'		,'150508')
+('Jose Mamerto'			, 'Quispe'		, 'Sanchez'		, '52132014'	, '985632102'	,'Psicologo'	, 'S' 			, 'Av. San Bartolo 7894'				, 'LuisMiguelLira153@gmail.com'		,'150512'),
+('Alberto Jacinto'		, 'Mamani'		, 'Quispe'		, '45259632'	, '963032147'	,'Guía'			, 'S'			, 'Sin dirección exacta.'				, 'JavierSanchez@outlook.com'		,'150514'),
+('Manuel Javier'		, 'Sanchez'		, 'Lira'		, '96358974'	, '963032568'	,'Psicologo'	, 'N'			, 'Sin dirección exacta.'				, 'MQAlbertoP789@hotmail.com'		,'150516'),
+('Luis Miguel'			, 'Lira'		, 'Del Riego'	, '02314521'	, '965874154'	,'Guía'		, 'N'			, 'Av. Simón Bolivar Mz B Lote 78'		, 'QuispeSanchez453@gmail.com'		,'150508')
+;
+
+-- RECORDING DATA IN THE TABLE "OPERATIVE UNIT"
+
+INSERT INTO operative_unit
+(name				, id_funcionary		, phonenumber	, address							, codubi)
+VALUES
+('SOA - CAÑETE'		, '1'				, '965241254'	, 'Av. Panamericana Sur Km 144'		, '150101'),
+('SOA - LIMA'		, '2'				, '963023147'	, 'Av. Panamericana Sur Km 846'		, '150101')
 ;
 
 -- RECORDING DATA IN THE TABLE (TRANSACTIONAL)
@@ -215,6 +238,7 @@ VALUES
 SELECT * FROM ubigeo;
 SELECT * FROM teen;
 SELECT * FROM funcionary ORDER BY id_funcionary DESC;
+SELECT * FROM operative_unit ORDER BY id_operativeunit DESC;
 SELECT * FROM attorney ORDER BY id_attorney DESC;
 SELECT * FROM funcionary_teen;
 
