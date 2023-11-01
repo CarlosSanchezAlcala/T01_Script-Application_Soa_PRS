@@ -40,25 +40,6 @@ CREATE TABLE attorney
      status 			char(1) 		NOT NULL DEFAULT ('A')
 );
 
--- CREATION TABLE OF (TEEN)
-CREATE TABLE teen
-(
-     id_teen		 	serial 			PRIMARY KEY,
-     name 				varchar(200) 	NOT NULL,
-     surnameFather 		varchar(200) 	NOT NULL,
-	 surnameMother 		varchar(200) 	NOT NULL,
-     dni 				varchar(8) 		NOT NULL,
-	 phonenumber 		varchar(9) 		NOT NULL,
-	 address 			varchar(200) 	NOT NULL,
-     email 				varchar(200) 	NOT NULL,
-	 birthade			DATE 			NOT NULL,
-	 gender				char(1)			NOT NULL,
-	 crime_committed	varchar(200)	NOT NULL,
-	 id_attorney		integer			NOT NULL REFERENCES attorney(id_attorney),
-	 codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
-	 status 			char(1)         NOT NULL DEFAULT ('A')
-);
-
 -- CREATION TABLE OF (FUNCIONARY)
 CREATE TABLE funcionary
 (
@@ -86,6 +67,26 @@ CREATE TABLE operative_unit
 	address				varchar(200)	NOT NULL,
 	codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
 	status				char(1)			NOT NULL DEFAULT ('A')
+);
+
+-- CREATION TABLE OF (TEEN)
+CREATE TABLE teen
+(
+     id_teen		 	serial 			PRIMARY KEY,
+     name 				varchar(200) 	NOT NULL,
+     surnameFather 		varchar(200) 	NOT NULL,
+	 surnameMother 		varchar(200) 	NOT NULL,
+     dni 				varchar(8) 		NOT NULL,
+	 phonenumber 		varchar(9) 		NOT NULL,
+	 address 			varchar(200) 	NOT NULL,
+     email 				varchar(200) 	NOT NULL,
+	 birthade			DATE 			NOT NULL,
+	 gender				char(1)			NOT NULL,
+	 id_operativeunit	integer			NOT NULL REFERENCES operative_unit(id_operativeunit),
+	 crime_committed	varchar(200)	NOT NULL,
+	 id_attorney		integer			NOT NULL REFERENCES attorney(id_attorney),
+	 codubi				char(6) 		NOT NULL REFERENCES ubigeo(codubi),
+	 status 			char(1)         NOT NULL DEFAULT ('A')
 );
 
 -- CREATION TABLE OF TRANSACTIONAL (FUNCIONARY (RANGE = {LEGAL GUARDIAN}) - ADOLESCENTE)
@@ -192,17 +193,6 @@ VALUES
 ('Mario Alberto'		, 'Quispe'		, 'Tantaira'	, '45259632'	, '963032147'	, 'Sin dirección exacta.'	, 'sinDirección@gmail.com'	,'150514')
 ;
 
--- RECORDING DATA IN THE TABLE "TEEN" --
-
-INSERT INTO teen
-(name					, surnameFather	, surnameMother	, dni			, phonenumber	, address						, email							,birthade		,gender	, crime_committed	, id_attorney	,codubi)
-VALUES
-('Jose Feliciano'		, 'Alcala'		, 'Sanchez'		, '45678945'	, '963230125'	, 'Av. Manzanalas 7894'			, 'SinDirección@gmail.com'		,'2020-01-01'	,'M'	,'Robo Menor'		,'1'			,'150101'),
-('Carlos Alberto'		, 'Cama'		, 'Padilla'		, '63254120'	, '963020035'	, 'Av. Sepulveda 56'			, 'SinDirección@gmail.com'		,'2020-01-02'	,'M'	,'Robo Menor'		,'2'			,'150101'),
-('Elizardo Jesús'		, 'Valerio'		, 'Alpaca'		, '63521410'	, '987452145'	, 'Av. Simón Bolivar 6320'		, 'SinDirección@gmail.com'		,'2020-01-03'	,'M'	,'Robo Menor'		,'2'			,'150101'),
-('Juana La'				, 'Cubana'		, 'Del Can'		, '45632012'	, '963254147'	, 'Av. Josefina 7864'			, 'SinDirección@gmail.com'		,'2020-01-04'	,'F'	,'Robo Menor'		,'1'			,'150101')
-;
-
 -- RECORDING DATA IN THE TABLE "FUNCIONARY" --
 
 INSERT INTO funcionary
@@ -221,6 +211,17 @@ INSERT INTO operative_unit
 VALUES
 ('SOA - CAÑETE'		, '1'				, '965241254'	, 'Av. Panamericana Sur Km 144'		, '150101'),
 ('SOA - LIMA'		, '2'				, '963023147'	, 'Av. Panamericana Sur Km 846'		, '150101')
+;
+
+-- RECORDING DATA IN THE TABLE "TEEN" --
+
+INSERT INTO teen
+(name					, surnameFather	, surnameMother	, dni			, phonenumber	, address						, email							,birthade		,gender	,id_operativeunit	, crime_committed	, id_attorney	,codubi)
+VALUES
+('Jose Feliciano'		, 'Alcala'		, 'Sanchez'		, '45678945'	, '963230125'	, 'Av. Manzanalas 7894'			, 'SinDirección@gmail.com'		,'2020-01-01'	,'M'	,'1'				,'Robo Menor'		,'1'			,'150101'),
+('Carlos Alberto'		, 'Cama'		, 'Padilla'		, '63254120'	, '963020035'	, 'Av. Sepulveda 56'			, 'SinDirección@gmail.com'		,'2020-01-02'	,'M'	,'2'				,'Robo Menor'		,'2'			,'150101'),
+('Elizardo Jesús'		, 'Valerio'		, 'Alpaca'		, '63521410'	, '987452145'	, 'Av. Simón Bolivar 6320'		, 'SinDirección@gmail.com'		,'2020-01-03'	,'M'	,'2'				,'Robo Menor'		,'2'			,'150101'),
+('Juana La'				, 'Cubana'		, 'Del Can'		, '45632012'	, '963254147'	, 'Av. Josefina 7864'			, 'SinDirección@gmail.com'		,'2020-01-04'	,'F'	,'1'				,'Robo Menor'		,'1'			,'150101')
 ;
 
 -- RECORDING DATA IN THE TABLE (TRANSACTIONAL)
