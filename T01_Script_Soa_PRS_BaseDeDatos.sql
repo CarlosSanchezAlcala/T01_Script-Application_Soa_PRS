@@ -10,8 +10,10 @@
 -- DROP TABLE attorney;
 -- DROP TABLE operative_unit;
 -- DROP TABLE teen;
+-- DROP TABLE transfer_data_teen;
 -- DROP TABLE funcionary_teen;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
+-- CREATION TABLE OF (UBIGEO)
 CREATE TABLE ubigeo (
      codubi char(6) NOT NULL PRIMARY KEY,
      depar varchar(100) NOT NULL,
@@ -74,6 +76,14 @@ CREATE TABLE teen (
      codubi char(6) NOT NULL REFERENCES ubigeo(codubi),
      status char(1) NOT NULL DEFAULT ('A')
 );
+-- CREATION TABLE OF (TRANSACTIONAL-TRANSFER)
+CREATE TABLE transfer_data_teen (
+     id_transferdatateen serial PRIMARY KEY,
+     id_teen integer NOT NULL REFERENCES teen(id_teen),
+	 document_pdf_office varchar(500) NOT NULL,
+	 date_hour_register TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	 status char(1) NOT NULL DEFAULT ('A')
+);
 -- CREATION TABLE OF TRANSACTIONAL (FUNCIONARY (RANGE = {LEGAL GUARDIAN}) - ADOLESCENTE)
 CREATE TABLE funcionary_teen (
      id_funcionaryteend serial PRIMARY KEY,
@@ -81,6 +91,25 @@ CREATE TABLE funcionary_teen (
      status char(1) NOT NULL DEFAULT ('A'),
      id_teen integer REFERENCES teen(id_teen),
      id_funcionary integer REFERENCES funcionary(id_funcionary)
+);
+-- CREATION TABLE OF ACTIVITIES (JULIA)
+CREATE TABLE activities(
+	 id_activities serial PRIMARY KEY,
+	 name VARCHAR(500),
+	 description VARCHAR(500),
+	 date DATE,
+	 location VARCHAR(500),
+	 duration VARCHAR(500),
+	 active CHAR(1),
+	 type_pronacej VARCHAR(500),
+	 type_soa VARCHAR(500)
+);
+-- CREATION TABLE OF TRANSACTIONAL (HISTORIAL(JULIA))
+CREATE TABLE historial_soa_teen(
+	 id_historial serial PRIMARY KEY,
+	 id_activities integer REFERENCES activities(id_activities),
+	 id_teen integer REFERENCES teen(id_teen),
+	 id_funcionary integer REFERENCES funcionary(id_funcionary)
 );
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 -- RECORDING DATA IN THE TABLE "UBIGEO"
@@ -4746,6 +4775,21 @@ VALUES ('Ayuda en la mejora.', '1', '1'),
           '2',
           '5'
      );
+-- RECORDING DATA IN THE TABLE (ACTIVITIES - JULIA)
+INSERT INTO activities(name, description, date, location, duration, active, type_pronacej, type_soa)
+VALUES ('Reinserción Social',
+		'Un taller interactivo donde los adolescentes infractores aprenderán habilidades para una reintegración exitosa en la sociedad',
+		'2023-10-10',
+		'Centro de Rehabilitación Juvenil "Esperanza Nueva"',
+		'1hora',
+		'A',
+		'Proncej',
+		'SOA');
+-- RECORDING DATA IN THE TABLE (TRANSACTIONAL - JULIA(HISTORIAL))
+INSERT INTO historial_soa_teen(id_activities, id_teen, id_funcionary)
+VALUES ('1',
+		'1',
+		'1');
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT *
 FROM ubigeo;
@@ -4791,4 +4835,10 @@ SELECT adol.*
 FROM teen adol
      LEFT JOIN funcionary_teen fa ON adol.id_teen = fa.id_teen
 WHERE fa.id_teen IS NULL;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM transfer_data_teen;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM historial_soa_teen;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
