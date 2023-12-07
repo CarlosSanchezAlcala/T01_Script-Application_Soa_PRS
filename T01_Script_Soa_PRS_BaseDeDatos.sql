@@ -1,4 +1,6 @@
 --------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+--------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TRUNCATE ubigeo RESTART IDENTITY;
 -- TRUNCATE teen RESTART IDENTITY;
 -- TRUNCATE funcionary RESTART IDENTITY;
@@ -61,6 +63,7 @@ CREATE TABLE operative_unit (
 -- CREATION TABLE OF (TEEN)
 CREATE TABLE teen (
      id_teen serial PRIMARY KEY,
+	 uuid_teen uuid DEFAULT uuid_generate_v4(),
      name varchar(200) NOT NULL,
      surnameFather varchar(200) NOT NULL,
      surnameMother varchar(200) NOT NULL,
@@ -4768,13 +4771,9 @@ VALUES (
 INSERT INTO funcionary_teen (description, id_teen, id_funcionary)
 VALUES ('Ayuda en la mejora.', '1', '1'),
      ('Ayuda en la conducta.', '4', '2'),
-     ('Ayuda para mejorar la conducta.', '2', '3'),
-     ('Ayuda quererse a sí mismo.', '2', '4'),
-     (
-          'Ayuda para dejar el autolastimarse.',
-          '2',
-          '5'
-     );
+     ('Ayuda para mejorar la conducta.', '3', '3'),
+     ('Ayuda para dejar el autolastimarse.', '2', '5')
+;
 -- RECORDING DATA IN THE TABLE (ACTIVITIES - JULIA)
 INSERT INTO activities(name, description, date, location, duration, active, type_pronacej, type_soa)
 VALUES ('Reinserción Social',
@@ -4814,17 +4813,23 @@ SELECT *
 FROM funcionary_teen;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 DELETE FROM teen
-WHERE id_teen = 10;
+WHERE id_teen = 26;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 DELETE FROM funcionary_teen
-WHERE id_funcionaryteend = 3;
+WHERE id_funcionaryteend = 5;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM funcionary_teen ft
+INNER JOIN funcionary f ON f.id_funcionary = ft.id_funcionary
+WHERE id_teen = 2;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT funcionary_teen.*,
      teen.*,
      funcionary.*
 FROM funcionary_teen
      INNER JOIN teen ON funcionary_teen.id_teen = teen.id_teen
-     INNER JOIN funcionary ON funcionary_teen.id_funcionary = funcionary.id_funcionary;
+     INNER JOIN funcionary ON funcionary_teen.id_funcionary = funcionary.id_funcionary
+ORDER BY id_funcionaryteend DESC;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT teen.*,
      attorney.*
@@ -4842,3 +4847,15 @@ FROM transfer_data_teen;
 SELECT *
 FROM historial_soa_teen;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT 
+    t.*,
+	u.*,
+	ou.*,
+    CASE 
+        WHEN t.status = 'T' THEN 'Transferido'
+        ELSE t.status 
+    END AS nuevo_status
+FROM teen t
+INNER JOIN ubigeo u ON u.codubi = t.codubi
+INNER JOIN operative_unit ou ON ou.id_operativeunit = t.id_operativeunit
+WHERE t.status = 'T';
