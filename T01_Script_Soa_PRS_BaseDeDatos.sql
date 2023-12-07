@@ -92,6 +92,8 @@ CREATE TABLE funcionary_teen (
      id_funcionaryteend serial PRIMARY KEY,
      description varchar(500) NOT NULL,
      status char(1) NOT NULL DEFAULT ('A'),
+	 date_hour_register TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	 function_start DATE,
      id_teen integer REFERENCES teen(id_teen),
      id_funcionary integer REFERENCES funcionary(id_funcionary)
 );
@@ -4774,7 +4776,7 @@ VALUES ('Ayuda en la mejora.', '1', '1'),
      ('Ayuda para mejorar la conducta.', '3', '3'),
      ('Ayuda para dejar el autolastimarse.', '2', '5')
 ;
--- RECORDING DATA IN THE TABLE (ACTIVITIES - JULIA)
+-- RECORDING DATA IN THE TABLE (ACTIVITIES)
 INSERT INTO activities(name, description, date, location, duration, active, type_pronacej, type_soa)
 VALUES ('Reinserción Social',
 		'Un taller interactivo donde los adolescentes infractores aprenderán habilidades para una reintegración exitosa en la sociedad',
@@ -4784,11 +4786,16 @@ VALUES ('Reinserción Social',
 		'A',
 		'Proncej',
 		'SOA');
--- RECORDING DATA IN THE TABLE (TRANSACTIONAL - JULIA(HISTORIAL))
+-- RECORDING DATA IN THE TABLE (TRANSACTIONAL)
 INSERT INTO historial_soa_teen(id_activities, id_teen, id_funcionary)
 VALUES ('1',
 		'1',
 		'1');
+		
+-- RECORDING DATA IN THE TABLE (ASIGNATION)
+INSERT INTO public.funcionary_teen(
+description, function_start, id_teen, id_funcionary)
+	VALUES ('Problemas Internos', '2023-12-10', 1, 1);
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT *
 FROM ubigeo;
