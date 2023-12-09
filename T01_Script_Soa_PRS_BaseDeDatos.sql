@@ -6,6 +6,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 -- TRUNCATE ubigeo RESTART IDENTITY;
 -- TRUNCATE teen RESTART IDENTITY;
+-- TRUNCATE transfer_data_teen RESTART IDENTITY;
 -- TRUNCATE funcionary RESTART IDENTITY;
 -- TRUNCATE operative_unit RESTART IDENTITY;
 -- TRUNCATE funcionary_teen RESTART IDENTITY;
@@ -100,9 +101,6 @@ CREATE TABLE teen (
      status char(1) NOT NULL DEFAULT ('A')
 );
 
--- NECESARIO PARA QUE FUNCIONE - TEEN | ASIGNATION
-ALTER TABLE teen ADD CONSTRAINT fk_id_teen UNIQUE (uuid_teen);
-
 
 -- CREATION TABLE OF (TRANSACTIONAL-TRANSFER)
 CREATE TABLE transfer_data_teen (
@@ -121,7 +119,7 @@ CREATE TABLE funcionary_teen (
      status char(1) NOT NULL DEFAULT ('A'),
 	 date_hour_register TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	 function_start DATE,
-     uuid_teen uuid REFERENCES teen(uuid_teen),
+     id_teen integer NOT NULL REFERENCES teen(id_teen),
      id_funcionary integer REFERENCES funcionary(id_funcionary)
 );
 
@@ -2042,6 +2040,7 @@ VALUES
 ('Esther Penelope','Dios','Yacila','96354874','985478478','Doctora','N','Calle San Simon 48','YacilaDios@hotmail.com','150511',1)
 ;
 
+
 -- RECORDING DATA IN THE TABLE "OPERATIVE UNIT"
 INSERT INTO operative_unit (name, id_funcionary, phonenumber, address)
 VALUES
@@ -2087,12 +2086,11 @@ VALUES
 
 
 -- RECORDING DATA IN THE TABLE (TRANSACTIONAL)
-INSERT INTO funcionary_teen (description, function_start, uuid_teen, id_funcionary)
+INSERT INTO funcionary_teen (description, function_start, id_teen, id_funcionary)
 VALUES
-('Ayuda en la mejora.','2023-12-10', 'de280af4-1aab-44fc-aa98-8eb9a6b5981c', '1'),
-('Ayuda en la conducta.','2023-12-12', 'e6091d3f-fd3b-46f2-a7e0-1a5bf0fbb7ed', '2'),
-('Ayuda para mejorar la conducta.','2023-12-11', '77fa9df1-7e2e-4cc7-b96f-72c355c5f3c8', '3'),
-('Ayuda para dejar el autolastimarse.','2023-12-09', '938fa306-7694-467e-a02f-b1f9be80c8dd', '5')
+('Ayuda en la mejora.','2023-12-10', 1, 1),
+('Ayuda en la salud.','2022-11-09', 2, 2),
+('Ayuda en lo social.','2021-10-08', 3, 3)
 ;
 
 
@@ -2179,7 +2177,7 @@ funcionary.status AS status_teen
 
 FROM funcionary_teen
 
-     INNER JOIN teen ON funcionary_teen.uuid_teen = teen.uuid_teen
+     INNER JOIN teen ON funcionary_teen.id_teen = teen.id_teen
      INNER JOIN funcionary ON funcionary_teen.id_funcionary = funcionary.id_funcionary
 	 
 ORDER BY id_funcionaryteend DESC;
