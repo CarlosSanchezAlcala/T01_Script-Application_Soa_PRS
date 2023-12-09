@@ -2170,29 +2170,43 @@ WHERE id_teen = 2;
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-SELECT funcionary_teen.*,
-	 teen.name AS name_teen,
-     teen.status AS status_teen,
-     funcionary.status AS status_teen
+SELECT
+
+funcionary_teen.*,
+teen.name AS name_teen,
+teen.status AS status_teen,
+funcionary.status AS status_teen
+
 FROM funcionary_teen
+
      INNER JOIN teen ON funcionary_teen.uuid_teen = teen.uuid_teen
      INNER JOIN funcionary ON funcionary_teen.id_funcionary = funcionary.id_funcionary
+	 
 ORDER BY id_funcionaryteend DESC;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-SELECT teen.*,
-     attorney.*
+SELECT
+
+teen.*,
+attorney.*
+
 FROM teen
+
      INNER JOIN attorney ON teen.id_attorney = attorney.id_attorney;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-SELECT adol.*
+SELECT
+
+adol.*
+
 FROM teen adol
+
      LEFT JOIN funcionary_teen fa ON adol.id_teen = fa.id_teen
+	 
 WHERE fa.id_teen IS NULL;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2211,15 +2225,21 @@ FROM historial_soa_teen;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT 
-    t.*,
-	u.*,
-	ou.*,
+t.*,
+u.*,
+ou.*,
+
     CASE 
+	
         WHEN t.status = 'T' THEN 'Transferido'
         ELSE t.status 
+		
     END AS nuevo_status
+	
 FROM teen t
-INNER JOIN ubigeo u ON u.codubi = t.codubi
-INNER JOIN operative_unit ou ON ou.id_operativeunit = t.id_operativeunit
+
+	INNER JOIN ubigeo u ON u.codubi = t.codubi
+	INNER JOIN operative_unit ou ON ou.id_operativeunit = t.id_operativeunit
+
 WHERE t.status = 'T';
 --------------------------------------------------------------------------------------------------------------------------------------------------------
