@@ -14,9 +14,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 -- DROP TABLE ubigeo;
--- DROP TABLE funcionary;
 -- DROP TABLE attorney;
--- DROP TABLE operative_unit;
+-- DROP TABLE funcionary CASCADE;
+-- DROP TABLE operative_unit CASCADE;
 -- DROP TABLE teen;
 -- DROP TABLE activities;
 -- DROP TABLE historial_soa_teen;
@@ -50,6 +50,17 @@ CREATE TABLE attorney (
 );
 
 
+-- CREATION TABLE OF (OPERATIVE UNIT)
+CREATE TABLE operative_unit (
+     id_operativeunit serial PRIMARY KEY,
+     name varchar(200) NOT NULL,
+     id_funcionary integer NOT NULL,
+     phonenumber char(10) NOT NULL,
+     address varchar(500) NOT NULL,
+     status char(1) NOT NULL DEFAULT ('A')
+);
+
+
 -- CREATION TABLE OF (FUNCIONARY)
 CREATE TABLE funcionary (
      id_funcionary serial PRIMARY KEY,
@@ -63,17 +74,7 @@ CREATE TABLE funcionary (
      address varchar(500) NOT NULL,
      email varchar(200) NOT NULL,
      codubi char(6) NOT NULL REFERENCES ubigeo(codubi),
-     status char(1) NOT NULL DEFAULT ('A')
-);
-
-
--- CREATION TABLE OF (OPERATIVE UNIT)
-CREATE TABLE operative_unit (
-     id_operativeunit serial PRIMARY KEY,
-     name varchar(200) NOT NULL,
-     id_funcionary integer NOT NULL REFERENCES funcionary(id_funcionary),
-     phonenumber char(10) NOT NULL,
-     address varchar(500) NOT NULL,
+	 id_operativeunit integer NOT NULL,
      status char(1) NOT NULL DEFAULT ('A')
 );
 
@@ -95,8 +96,12 @@ CREATE TABLE teen (
      crime_committed varchar(200) NOT NULL,
      id_attorney integer NOT NULL REFERENCES attorney(id_attorney),
      codubi char(6) NOT NULL REFERENCES ubigeo(codubi),
+	 date_hour_register TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
      status char(1) NOT NULL DEFAULT ('A')
 );
+
+-- NECESARIO PARA QUE FUNCIONE - TEEN | ASIGNATION
+ALTER TABLE teen ADD CONSTRAINT fk_id_teen UNIQUE (uuid_teen);
 
 
 -- CREATION TABLE OF (TRANSACTIONAL-TRANSFER)
@@ -116,12 +121,12 @@ CREATE TABLE funcionary_teen (
      status char(1) NOT NULL DEFAULT ('A'),
 	 date_hour_register TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	 function_start DATE,
-     id_teen integer REFERENCES teen(id_teen),
+     uuid_teen uuid REFERENCES teen(uuid_teen),
      id_funcionary integer REFERENCES funcionary(id_funcionary)
 );
 
 
--- CREATION TABLE OF ACTIVITIES (JULIA)
+-- CREATION TABLE OF ACTIVITIES
 CREATE TABLE activities(
 	 id_activities serial PRIMARY KEY,
 	 name VARCHAR(500),
@@ -144,7 +149,6 @@ CREATE TABLE historial_soa_teen(
 );
 
 
---------------------------------------------------------------------------------------------------------------------------------------------------------
 -- RECORDING DATA IN THE TABLE "UBIGEO"
 INSERT INTO ubigeo (codubi, depar, provi, distri)
 VALUES
@@ -2009,33 +2013,33 @@ VALUES
 
 
 -- RECORDING DATA IN THE TABLE "FUNCIONARY" --
-INSERT INTO funcionary (name,surnameFather,surnameMother,dni,phonenumber,range,confirmation,address,email,codubi)
+INSERT INTO funcionary (name,surnameFather,surnameMother,dni,phonenumber,range,confirmation,address,email,codubi,id_operativeunit)
 VALUES
-('Jose Mamerto','Quispe','Sanchez','52132014','985632102','Psicologo','S','Av. San Bartolo 7894','LuisMiguelLira153@gmail.com','150512'),
-('Alberto Jacinto', 'Mamani','Quispe','45259632','963032147', 'Guía','N','Sin dirección exacta.','JavierSanchez@outlook.com','150514'),
-('Manuel Javier','Sanchez','Lira','96358974','963032568','Psicologo','N','Sin dirección exacta.','MQAlbertoP789@hotmail.com','150516' ),
-('Luis Miguel','Lira','Del Riego','02314521','965874154','Directora','N','Av. Simón Bolivar Mz B Lote 78','QuispeSanchez453@gmail.com','150508'),
-('Juan Alberto','García','Pérez','12345678','987654321','Ayudante','N','Calle 123, Urbanización Los Pinos','juangp@gmail.com','150405'),
-('María Yacila','López','Martínez','87654321','923456789','Guía','N','Avenida Central 45','marialm@hotmail.com','150516'),
-('Pedro Faustino','Fernández','Gómez','23456789','967890123','Ayudante','N','Calle Mayor 67','pedrofg@outlook.com','150516'),
-('Ana Messi','Sánchez','Rodríguez','34567890','978901234','Guía','N','Paseo de la Playa 12','anasmr@gmail.com','150516'),
-('Carlos Cr7','Ramírez','Hernández','45678901','989012345','Guía','N','Callejón 56','carlosrh@hotmail.com','150405'),
-('Sofía Neymar','Díaz','Pérez','56789012','990123456','Guía','N','Camino Real 34','sofiadp@outlook.com','150512'),
-('Luis Feliciano','Martínez','López','67890123','901234567','Doctora','S','Ruta Verde 23','luismml@gmail.com','150512'),
-('Elena Faustina','Gómez','Fernández','78901234','912345678','Doctora','S','Avenida Principal 78','elenagf@hotmail.com','150405'),
-('Miguel King','Hernández','Sánchez','89012345','923456789','Ayudante','N','Calle Mayor 67','miguelhs@gmail.com','150512'),
-('Isabel Alberta','Pérez','García','90123456','934567890','Directora','S','Calle Nueva 56','isabelpg@outlook.com','150405'),
-('David Mamerto','López','Díaz','01234567','945678901','Ayudante','N','Avenida Principal 34','davidld@gmail.com','150113'),
-('Laura Sofia','Rodríguez','Ramírez','12345670','956789012','Ayudante','N','Calle Real 89','laurarr@outlook.com','150405'),
-('Javier José','Fernández','Martínez','23456789','967890123','Directora','N','Paseo del Bosque 12','javierfm@gmail.com','150509'),
-('Sara Tania','Gómez','Sánchez','34567890','978901234','Doctora','S','Avenida del Parque 56','sarags@hotmail.com','150405'),
-('Carlos José','Sánchez','López','45678901','989012345','Ayudante','N','Callejón 78','carlossl@outlook.com','150138'),
-('María Clara','Ramírez','Gómez','56789012','990123456','Guía','N','Calle del Sol 23','mariarg@gmail.com','150113'),
-('Luis Eleciano','Pérez','Hernández','67890123','901234567','Ayudante','N','Avenida Central 67','luisph@hotmail.com','150405'),
-('Elena Yaina','López','Fernández','78901234','912345678','Directora','N','Calle del Bosque 45','elenalf@outlook.com','150138'),
-('Javier Bruno','Sánchez','Díaz','89012345','923456789','Directora','N','Paseo de la Playa 78','javiersd@gmail.com','150138'),
-('Sofía Elena','Martínez','Pérez','90123456','934567890','Directora','N','Calle Mayor 56','sofiaml@hotmail.com','150511'),
-('Esther Penelope','Dios','Yacila','96354874','985478478','Doctora','N','Calle San Simon 48','YacilaDios@hotmail.com','150511')
+('Jose Mamerto','Quispe','Sanchez','52132014','985632102','Psicologo','S','Av. San Bartolo 7894','LuisMiguelLira153@gmail.com','150512',1),
+('Alberto Jacinto', 'Mamani','Quispe','45259632','963032147', 'Guía','N','Sin dirección exacta.','JavierSanchez@outlook.com','150514',2),
+('Manuel Javier','Sanchez','Lira','96358974','963032568','Psicologo','N','Sin dirección exacta.','MQAlbertoP789@hotmail.com','150516',3),
+('Luis Miguel','Lira','Del Riego','02314521','965874154','Directora','N','Av. Simón Bolivar Mz B Lote 78','QuispeSanchez453@gmail.com','150508',4),
+('Juan Alberto','García','Pérez','12345678','987654321','Ayudante','N','Calle 123, Urbanización Los Pinos','juangp@gmail.com','150405',1),
+('María Yacila','López','Martínez','87654321','923456789','Guía','N','Avenida Central 45','marialm@hotmail.com','150516',2),
+('Pedro Faustino','Fernández','Gómez','23456789','967890123','Ayudante','N','Calle Mayor 67','pedrofg@outlook.com','150516',3),
+('Ana Messi','Sánchez','Rodríguez','34567890','978901234','Guía','N','Paseo de la Playa 12','anasmr@gmail.com','150516',4),
+('Carlos Cr7','Ramírez','Hernández','45678901','989012345','Guía','N','Callejón 56','carlosrh@hotmail.com','150405',1),
+('Sofía Neymar','Díaz','Pérez','56789012','990123456','Guía','N','Camino Real 34','sofiadp@outlook.com','150512',2),
+('Luis Feliciano','Martínez','López','67890123','901234567','Doctora','S','Ruta Verde 23','luismml@gmail.com','150512',3),
+('Elena Faustina','Gómez','Fernández','78901234','912345678','Doctora','S','Avenida Principal 78','elenagf@hotmail.com','150405',4),
+('Miguel King','Hernández','Sánchez','89012345','923456789','Ayudante','N','Calle Mayor 67','miguelhs@gmail.com','150512',1),
+('Isabel Alberta','Pérez','García','90123456','934567890','Directora','S','Calle Nueva 56','isabelpg@outlook.com','150405',2),
+('David Mamerto','López','Díaz','01234567','945678901','Ayudante','N','Avenida Principal 34','davidld@gmail.com','150113',3),
+('Laura Sofia','Rodríguez','Ramírez','12345670','956789012','Ayudante','N','Calle Real 89','laurarr@outlook.com','150405',4),
+('Javier José','Fernández','Martínez','23456789','967890123','Directora','N','Paseo del Bosque 12','javierfm@gmail.com','150509',1),
+('Sara Tania','Gómez','Sánchez','34567890','978901234','Doctora','S','Avenida del Parque 56','sarags@hotmail.com','150405',2),
+('Carlos José','Sánchez','López','45678901','989012345','Ayudante','N','Callejón 78','carlossl@outlook.com','150138',3),
+('María Clara','Ramírez','Gómez','56789012','990123456','Guía','N','Calle del Sol 23','mariarg@gmail.com','150113',4),
+('Luis Eleciano','Pérez','Hernández','67890123','901234567','Ayudante','N','Avenida Central 67','luisph@hotmail.com','150405',1),
+('Elena Yaina','López','Fernández','78901234','912345678','Directora','N','Calle del Bosque 45','elenalf@outlook.com','150138',2),
+('Javier Bruno','Sánchez','Díaz','89012345','923456789','Directora','N','Paseo de la Playa 78','javiersd@gmail.com','150138',3),
+('Sofía Elena','Martínez','Pérez','90123456','934567890','Directora','N','Calle Mayor 56','sofiaml@hotmail.com','150511',4),
+('Esther Penelope','Dios','Yacila','96354874','985478478','Doctora','N','Calle San Simon 48','YacilaDios@hotmail.com','150511',1)
 ;
 
 -- RECORDING DATA IN THE TABLE "OPERATIVE UNIT"
@@ -2061,6 +2065,14 @@ VALUES
 ;
 
 
+-- CREATION PK -FK (OPERATIVE UNIT - FUNCIONARY)
+ALTER TABLE operative_unit ADD CONSTRAINT id_funcionary FOREIGN KEY (id_funcionary) REFERENCES funcionary(id_funcionary);
+
+
+-- CREATION PK -FK (FUNCIONARY - OPERATIVE UNIT)
+ALTER TABLE funcionary ADD CONSTRAINT id_operativeunit FOREIGN KEY (id_operativeunit) REFERENCES operative_unit(id_operativeunit);
+
+
 -- RECORDING DATA IN THE TABLE "TEEN" --
 INSERT INTO teen (name,surnameFather,surnameMother,dni,phonenumber,address,email,birthade,gender,id_operativeunit,crime_committed,id_attorney,codubi)
 VALUES
@@ -2075,12 +2087,12 @@ VALUES
 
 
 -- RECORDING DATA IN THE TABLE (TRANSACTIONAL)
-INSERT INTO funcionary_teen (description, function_start, id_teen, id_funcionary)
+INSERT INTO funcionary_teen (description, function_start, uuid_teen, id_funcionary)
 VALUES
-('Ayuda en la mejora.','2023-12-10', '1', '1'),
-('Ayuda en la conducta.','2023-12-12', '4', '2'),
-('Ayuda para mejorar la conducta.','2023-12-11', '3', '3'),
-('Ayuda para dejar el autolastimarse.','2023-12-09', '2', '5')
+('Ayuda en la mejora.','2023-12-10', 'de280af4-1aab-44fc-aa98-8eb9a6b5981c', '1'),
+('Ayuda en la conducta.','2023-12-12', 'e6091d3f-fd3b-46f2-a7e0-1a5bf0fbb7ed', '2'),
+('Ayuda para mejorar la conducta.','2023-12-11', '77fa9df1-7e2e-4cc7-b96f-72c355c5f3c8', '3'),
+('Ayuda para dejar el autolastimarse.','2023-12-09', '938fa306-7694-467e-a02f-b1f9be80c8dd', '5')
 ;
 
 
@@ -2159,10 +2171,11 @@ WHERE id_teen = 2;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT funcionary_teen.*,
-     teen.*,
-     funcionary.*
+	 teen.name AS name_teen,
+     teen.status AS status_teen,
+     funcionary.status AS status_teen
 FROM funcionary_teen
-     INNER JOIN teen ON funcionary_teen.id_teen = teen.id_teen
+     INNER JOIN teen ON funcionary_teen.uuid_teen = teen.uuid_teen
      INNER JOIN funcionary ON funcionary_teen.id_funcionary = funcionary.id_funcionary
 ORDER BY id_funcionaryteend DESC;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
