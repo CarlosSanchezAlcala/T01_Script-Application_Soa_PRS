@@ -2089,8 +2089,8 @@ VALUES
 INSERT INTO funcionary_teen (description, function_start, id_teen, id_funcionary)
 VALUES
 ('Ayuda en la mejora.','2023-12-10', 1, 1),
-('Ayuda en la salud.','2022-11-09', 2, 2),
-('Ayuda en lo social.','2021-10-08', 3, 3)
+('Ayuda en la salud.','2022-11-09', 2, 11),
+('Ayuda en lo social.','2021-10-08', 3, 12)
 ;
 
 
