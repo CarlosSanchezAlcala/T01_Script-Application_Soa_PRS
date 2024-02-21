@@ -15,11 +15,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 -- DROP TABLE ubigeo;
+-- DROP TABLE attendance CASCADE;
+-- DROP TABLE programs CASCADE;
 -- DROP TABLE attorney;
 -- DROP TABLE funcionary CASCADE;
 -- DROP TABLE operative_unit CASCADE;
--- DROP TABLE teen;
--- DROP TABLE activities;
+-- DROP TABLE teen CASCADE;
+-- DROP TABLE activities CASCADE;
 -- DROP TABLE historial_soa_teen;
 -- DROP TABLE transfer_data_teen;
 -- DROP TABLE funcionary_teen;
@@ -123,29 +125,51 @@ CREATE TABLE funcionary_teen (
      id_funcionary integer REFERENCES funcionary(id_funcionary)
 );
 
-
--- CREATION TABLE OF ACTIVITIES
-CREATE TABLE activities(
+-- CREATION TABLE OF (ACTIVITIES)
+CREATE TABLE activities (
 	 id_activities serial PRIMARY KEY,
-	 name VARCHAR(500),
-	 description VARCHAR(500),
+	 name varchar(100),
+	 description varchar(500),
 	 date DATE,
-	 location VARCHAR(500),
-	 duration VARCHAR(500),
-	 active CHAR(1) NOT NULL DEFAULT ('A'),
-	 type_pronacej VARCHAR(500),
-	 type_soa VARCHAR(500)
+	 location varchar(100),
+	 duration varchar(50),
+	 status char(1) NOT NULL DEFAULT ('A'),
+	 type_pronacej varchar(50),
+	 type_soa varchar(50)
+);
+
+-- CREATION TABLE OF PROGRAMS
+CREATE TABLE programs (
+     id_programs serial PRIMARY KEY,
+     name varchar(500),
+     type varchar(500),
+     beneficiary varchar(500),
+     responsible varchar(500),
+     description varchar(500),
+     condition varchar(500),
+     duration varchar(500),
+	 status char(1) NOT NULL DEFAULT ('A')
+);
+
+-- CREATION TABLE OF (ATTENDANCE)
+CREATE TABLE attendance (
+     id_attendance serial PRIMARY KEY,
+     id_activities INTEGER NOT NULL REFERENCES activities(id_activities),
+     id_teen INTEGER NOT NULL REFERENCES teen(id_teen),
+	 id_funcionary integer NOT NULL REFERENCES funcionary(id_funcionary),
+	 id_programs integer NOT NULL REFERENCES programs(id_programs),
+     attendance CHAR(1),
+	 status char(1) NOT NULL DEFAULT ('A'),
+	 date DATE
 );
 
 
--- CREATION TABLE OF TRANSACTIONAL (HISTORIAL(JULIA))
-CREATE TABLE historial_soa_teen(
-	 id_historial serial PRIMARY KEY,
-	 id_activities integer REFERENCES activities(id_activities),
-	 id_teen integer REFERENCES teen(id_teen),
-	 id_funcionary integer REFERENCES funcionary(id_funcionary)
+-- CREATION TABLE OF (TRANSACTIONAL HISTORIAL SOA TEEN)
+CREATE TABLE historial_soa_teen (
+     id_historial serial PRIMARY KEY,
+	 id_attendance integer NOT NULL REFERENCES attendance(id_attendance),
+	 status char(1) NOT NULL DEFAULT ('A')
 );
-
 
 -- RECORDING DATA IN THE TABLE "UBIGEO"
 INSERT INTO ubigeo (codubi, depar, provi, distri)
@@ -2064,11 +2088,11 @@ VALUES
 ;
 
 
--- CREATION PK -FK (OPERATIVE UNIT - FUNCIONARY)
+-- CREATION PK - FK (OPERATIVE UNIT - FUNCIONARY)
 ALTER TABLE operative_unit ADD CONSTRAINT id_funcionary FOREIGN KEY (id_funcionary) REFERENCES funcionary(id_funcionary);
 
 
--- CREATION PK -FK (FUNCIONARY - OPERATIVE UNIT)
+-- CREATION PK - FK (FUNCIONARY - OPERATIVE UNIT)
 ALTER TABLE funcionary ADD CONSTRAINT id_operativeunit FOREIGN KEY (id_operativeunit) REFERENCES operative_unit(id_operativeunit);
 
 
@@ -2096,7 +2120,8 @@ VALUES
 
 -- RECORDING DATA IN THE TABLE (ACTIVITIES)
 INSERT INTO activities(name, description, date, location, duration, type_pronacej, type_soa)
-VALUES('Reinserción Social','Un taller interactivo donde los adolescentes infractores aprenderán habilidades para una reintegración exitosa en la sociedad','2023-10-10','Centro de Rehabilitación Juvenil "Esperanza Nueva"','1hora','Proncej','SOA')
+VALUES
+('Reinserción Social','Un taller interactivo donde los adolescentes infractores aprenderán habilidades para una reintegración exitosa en la sociedad','2023-10-10','Centro de Rehabilitación Juvenil "Esperanza Nueva"','1hora','Proncej','SOA')
 ;
 
 
@@ -2106,6 +2131,31 @@ VALUES
 ('1','1','1')
 ;
 
+-- RECORDING DATA IN THE TABLE (ACTIVITIES)
+INSERT INTO activities(name, description, date, location, duration, type_pronacej, type_soa)
+VALUES
+('Reinserción Social', 'Un taller interactivo de los adolescentes.', '2023-10-10', 'Centro de Rehabilitación Juvenil "Esperanza Nueva"', '1hora', 'Proncej','SOA')
+;
+
+-- RECORDING DATA IN THE TABLE (PROGRAMS)
+INSERT INTO programs (name, type, beneficiary, responsible, description, duration, condition)
+VALUES
+('INTERVENCIÓN TERAPÉUTICA', 'Terapia', 'Mejora de la salud mental, manejo del estrés', 'Dr. Ana Salazar, Psicóloga Clínica', 'Sesiones de terapia individual para abordar problemas emocionales y mejorar el bienestar psicológico.', '2 Meses', 'A'),
+('INTERVENCIÓN PARA AAS', 'Programa Educativo', 'Desarrollo académico y habilidades sociales', 'Prof. Javier Rodríguez, Educador', 'Intervención educativa centrada en el apoyo académico y el desarrollo de habilidades sociales para los estudiantes.', '6 Meses', 'A'),
+('FIRMES Y ADELANTE', 'Coaching Personal', 'Empoderamiento, establecimiento de metas', 'Coach María Fernández', 'Sesiones de coaching para ayudar a las personas a establecer metas, superar obstáculos y avanzar en sus vidas.', '1 Mes y 3 Semanas', 'A'),
+('TRABAJANDO POR MI COMUNIDAD', ' Voluntariado', 'Sentido de comunidad, contribución social', 'Sr. Roberto Gómez, Coordinador de Voluntarios', 'Actividades de voluntariado en la comunidad para promover el sentido de pertenencia y la solidaridad.', '3 Meses', 'A'),
+('AYUDANDO POR UN MUNDO MEJOR', 'Proyecto Social', 'Impacto social positivo, conciencia comunitaria', 'Sr. Carlos Hernández, Coordinador de Proyectos Sociales', 'Proyecto comunitario enfocado en la mejora del entorno y la vida de las personas a través de diversas iniciativas.', '4 Meses', 'A')
+;
+
+-- RECORDING DATA IN THE TABLE (ATTENDANCE)
+INSERT INTO attendance (id_activities, id_teen, id_funcionary, id_programs, attendance,date)
+VALUES
+(1, 1, 1, 1,'A','24/11/2023')
+;
+
+-- RECORDING DATA IN THE TABLE (HISTORIAL_SOA_TEEN)
+INSERT INTO historial_soa_teen (id_attendance)
+VALUES (1);
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT *
@@ -2143,7 +2193,8 @@ ORDER BY id_attorney DESC;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 SELECT *
-FROM funcionary_teen;
+FROM funcionary_teen
+ORDER BY id_funcionaryteend DESC;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -2155,7 +2206,7 @@ WHERE id_teen = 26;
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 DELETE FROM funcionary_teen
-WHERE id_funcionaryteend = 5;
+WHERE id_funcionaryteend = 14;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -2210,8 +2261,17 @@ WHERE fa.id_teen IS NULL;
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-SELECT *
-FROM transfer_data_teen;
+SELECT
+tdt.*,
+t.name,
+t.surnameFather,
+t.surnameMother,
+u.depar,
+u.provi,
+u.distri
+FROM transfer_data_teen tdt
+INNER JOIN teen t ON t.id_teen = tdt.id_teen
+INNER JOIN ubigeo u ON t.codubi = u.codubi;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -2241,4 +2301,19 @@ FROM teen t
 	INNER JOIN operative_unit ou ON ou.id_operativeunit = t.id_operativeunit
 
 WHERE t.status = 'T';
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM activities;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM attendance;
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+SELECT *
+FROM historial_soa_teen;
 --------------------------------------------------------------------------------------------------------------------------------------------------------
